@@ -112,6 +112,17 @@ const Main = () => {
     return images[randomIndex];
   };
 
+  const handleFromDegreeChange = (value) => {
+    const negativeValue = value < 0 ? value : -Math.abs(value);
+    setValue("from_degree", negativeValue);
+    setFromDegree(negativeValue);
+  };
+  const handleToDegreeChange = (value) => {
+    const negativeValue = value < 0 ? value : +Math.abs(value);
+    setValue("to_degree", negativeValue);
+    setFromDegree(negativeValue);
+  };
+
   return (
     <Flex mt={30} flexDir={"column"} gap={4} p={5}>
       <Grid gridTemplateColumns={"1fr 1fr"} gap={3}>
@@ -123,6 +134,7 @@ const Main = () => {
             label="From Degree"
             type="number"
             defaultValue={fromDegree}
+            onChange={(e) => handleFromDegreeChange(e.target.value)}
           />
         </Flex>
         <Flex gap={2} flexDir={"column"}>
@@ -132,6 +144,7 @@ const Main = () => {
             control={control}
             label="To Degree"
             type="number"
+            onChange={(e) => handleToDegreeChange(e.target.value)}
             defaultValue={toDegree}
           />
         </Flex>
