@@ -4,19 +4,25 @@ import FormInput from "../../components/ui/FormInput";
 import FormSelect from "../../components/ui/FormSelect";
 import { useForm } from "react-hook-form";
 import { useClothesMutation, useSeasonMutation } from "../../services/auth.service";
-import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, Image, Text } from "@chakra-ui/react";
 import s from "./index.module.scss";
+import img1 from '../../assets/IMG_8946.jpg'
+import img2 from '../../assets/IMG_8948.jpg'
+import img3 from '../../assets/IMG_8949.jpg'
+import img4 from '../../assets/IMG_8950.jpg'
+import img5 from '../../assets/IMG_8952.jpg'
+import img6 from '../../assets/IMG_8954.jpg'
+import img7 from '../../assets/IMG_8956.jpg'
 
 const Main = () => {
-  const { control, watch, handleSubmit, setValue, getValues } = useForm(
-    {
-      defaultValues: {
-        gender: [""],
-        season_id: ""
-      }
+  const { control, watch, setValue } = useForm({
+    defaultValues: {
+      gender: [""],
+      season_id: ""
     }
-  );
+  });
 
+  const [clothes, setClothes] = useState([]);
   const [seasons, SetSeasons] = useState([]);
   const { mutate } = useSeasonMutation({
     onSuccess: (res) => {
@@ -28,7 +34,11 @@ const Main = () => {
     }
   });
 
-  const { mutate: generateClothes } = useClothesMutation();
+  const { mutate: generateClothes } = useClothesMutation({
+    onSuccess: (response) => {
+      setClothes(response?.data?.response);
+    }
+  });
 
   const [fromDegree, setFromDegree] = useState(null);
   const [toDegree, setToDegree] = useState(null);
@@ -96,6 +106,12 @@ const Main = () => {
     generateClothes(requestData);
   };
 
+  const getRandomImage = () => {
+    const images = [img1, img2, img3, img4, img5, img6, img7];
+    const randomIndex = Math.floor(Math.random() * images.length);
+    return images[randomIndex];
+  };
+
   return (
     <Flex mt={30} flexDir={"column"} gap={4} p={5}>
       <Grid gridTemplateColumns={"1fr 1fr"} gap={3}>
@@ -135,8 +151,8 @@ const Main = () => {
             name="gender"
             control={control}
             options={[
-              { value: "man", label: "Male" },
-              { value: "woman", label: "Female" },
+              { value: "men", label: "Male" },
+              { value: "women", label: "Female" },
             ]}
             required
             placeholder="Select your gender"
@@ -144,6 +160,18 @@ const Main = () => {
         </Flex>
       </Grid>
       <Button w={"100%"} onClick={() => generate()}>generate clothes</Button>
+
+      <>
+        {clothes.map((el) => (
+          <Flex gap={4} key={el.guid}>
+            <Image border={"1px solid #e7e7e7"} w={"300px"} h={"300px"} objectFit={"cover"} borderRadius={4} src={getRandomImage()} alt={el.name} />
+            <Flex gap={5} flexDir={"column"}>
+              <Text textTransform={"uppercase"} fontSize={"17px"} fontWeight={"600"}>Образ для {el.name}</Text>
+              <Text fontSize={"17px"} fontWeight={"600"}>Можно одеть при градусе от {el.from_degree} до {el.to_degree} </Text>
+            </Flex>
+          </Flex>
+        ))}
+      </>
     </Flex>
   );
 };
