@@ -9,3 +9,7 @@ const authService = {
 export const useSeasonMutation = (mutationSettings) => {
 	return useMutation((data) => authService.getSeason(data), mutationSettings);
 };
+
+export const useClothesMutation = (mutationSettings) => {
+	return useMutation((data) => authService.getClothes(data), mutationSettings)
+}
