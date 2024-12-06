@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const httpRequestAuth = axios.create({
-  baseURL: import.meta.env.VITE_AUTH_BASE_URL,
+  baseURL: "https://admin-api.ucode.run/v2/object",
   timeout: 100000,
   headers: {
     Authorization: "API-KEY",

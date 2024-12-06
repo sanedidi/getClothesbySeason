@@ -11,33 +11,30 @@ const Main = () => {
   const { control, watch, handleSubmit, setValue, getValues } = useForm(
     {
       defaultValues: {
-        gender: [""]
+        gender: [""],
+        season_id: ""
       }
     }
   );
-  const [seasons, SetSeasons] = useState([])
-  const { mutate } = useSeasonMutation(
-    {
-      onSuccess: (res) => {
-        const formattedSeasons = res?.data?.response?.map((season) => ({
-          value: season.guid,
-          label: season.name,
-        }));
-        SetSeasons(formattedSeasons);
 
-      }
+  const [seasons, SetSeasons] = useState([]);
+  const { mutate } = useSeasonMutation({
+    onSuccess: (res) => {
+      const formattedSeasons = res?.data?.response?.map((season) => ({
+        value: season.guid,
+        label: season.name,
+      }));
+      SetSeasons(formattedSeasons);
     }
-  );
-  const { mutate: generateClothes } = useClothesMutation()
+  });
 
-
+  const { mutate: generateClothes } = useClothesMutation();
 
   const [fromDegree, setFromDegree] = useState(null);
   const [toDegree, setToDegree] = useState(null);
 
   const API_KEY = "9f2b65c06589e9bcc829867591a46c84";
   const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
-
 
   const getLocation = () => {
     return new Promise((resolve, reject) => {
@@ -49,18 +46,15 @@ const Main = () => {
     });
   };
 
-
   const fetchLocationAndWeather = async () => {
     try {
       const position = await getLocation();
       const { latitude, longitude } = position.coords;
 
-
       const weatherResponse = await fetch(
         `${WEATHER_API_URL}?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
       );
       const weatherData = await weatherResponse.json();
-
 
       const currentTemperature = weatherData.main.temp;
       const ToDegree = weatherData.main.feels_like;
@@ -83,20 +77,14 @@ const Main = () => {
   }, []);
 
   useEffect(() => {
-    const subscription = watch((values) => {
-      const data = {
-        data: { ...values },
-      };
-      mutate(data);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch, mutate]);
+    const data = {
+      data: {},
+    };
+    mutate(data);
+  }, [mutate]);
 
   const generate = () => {
     const formData = watch();
-
-
     const requestData = {
       data: {
         from_degree: { $gt: formData.from_degree },
@@ -105,7 +93,6 @@ const Main = () => {
         gender: [formData.gender],
       }
     };
-
     generateClothes(requestData);
   };
 
@@ -148,8 +135,8 @@ const Main = () => {
             name="gender"
             control={control}
             options={[
-              { value: "male", label: "Male" },
-              { value: "female", label: "Female" },
+              { value: "man", label: "Male" },
+              { value: "woman", label: "Female" },
             ]}
             required
             placeholder="Select your gender"
